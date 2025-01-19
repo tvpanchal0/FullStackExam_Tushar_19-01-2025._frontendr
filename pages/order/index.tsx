@@ -17,15 +17,19 @@ interface Order {
 }
 
 const OrderPage: React.FC = () => {
-  const [orders, setOrders] = useState<Order[]>([]); // Specify the type for orders
+  const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isClient, setIsClient] = useState(false);  // To track if the component is mounted on the client
   const router = useRouter();
-  const token = localStorage.getItem('token');
 
   useEffect(() => {
+    setIsClient(true); // Set to true when the component is mounted on the client
+
+    const token = localStorage.getItem('token');  // This will run only on the client side
+
     if (token) {
       getOrders(token)
-        .then((data: Order[]) => { // Specify the type for the response data
+        .then((data: Order[]) => {
           setOrders(data);
           setLoading(false);
         })
@@ -36,8 +40,9 @@ const OrderPage: React.FC = () => {
     } else {
       router.push('/login');
     }
-  }, [token, router]);
+  }, [router]);
 
+  if (!isClient) return <div>Loading...</div>; // Show loading until client-side rendering is ready
   if (loading) return <div>Loading...</div>;
 
   return (
