@@ -3,8 +3,18 @@ import { getCart, placeOrder } from '../../utils/api';
 import CartItem from '../../components/CartItem';
 import { useRouter } from 'next/router';
 import { toast } from 'react-toastify';
+
+interface CartItemType {
+  _id: string;
+  name: string;
+  price: number;
+  quantity: number;
+  productId : string;
+  // Add other properties based on your actual data structure
+}
+
 const CartPage: React.FC = () => {
-  const [cartItems, setCartItems] = useState<any[]>([]);
+  const [cartItems, setCartItems] = useState<CartItemType[]>([]);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
   const [token, setToken] = useState<string | null>(null);
@@ -33,9 +43,7 @@ const CartPage: React.FC = () => {
     }
   }, [token]);
 
-  const removeFromCart = (productId: string) => {
-    // Handle remove logic here (call remove API or filter out item)
-  };
+ 
 
   const handleCheckout = async () => {
     if (token && cartItems.length > 0) {
@@ -48,7 +56,7 @@ const CartPage: React.FC = () => {
         toast.success('Order placed successfully');
         router.push('/order');
       } catch (error) {
-      
+        console.error(error);
         toast.error('Error placing order');
       }
     }
@@ -61,8 +69,8 @@ const CartPage: React.FC = () => {
       <h1 className="text-2xl font-semibold mb-4">Your Cart</h1>
       {cartItems.length > 0 ? (
         <div>
-          {cartItems.map((item: any) => (
-            <CartItem key={item._id} item={item} removeFromCart={removeFromCart} />
+          {cartItems.map((item: CartItemType) => (
+            <CartItem key={item._id} item={item} />
           ))}
           <button
             onClick={handleCheckout}

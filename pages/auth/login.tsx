@@ -33,6 +33,7 @@ const LoginPage: React.FC = () => {
       localStorage.setItem('token', data.token);
       router.push('/');
     } catch (err) {
+      console.error(err); // Log the error if needed
       setError('Invalid credentials');
     }
   };
@@ -83,7 +84,7 @@ const LoginPage: React.FC = () => {
         {/* Link to Registration Page */}
         <div className="mt-4 text-center">
           <p className="text-gray-700">
-            Don't have an account?{' '}
+            Don&apos;t have an account?{' '}
             <Link href="/auth/register" className="text-blue-500 hover:underline">
               Sign Up
             </Link>

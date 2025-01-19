@@ -1,12 +1,30 @@
-// pages/checkout.tsx
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useRouter } from 'next/router';
 import { toast } from 'react-toastify';
+
+// Define a CartItem interface with the appropriate fields
+interface CartItem {
+  productId: string;
+  name: string;
+  price: number;
+  quantity: number;
+}
+
 const Checkout = () => {
   const [shippingAddress, setShippingAddress] = useState('');
-  const [cartItems, setCartItems] = useState<any[]>([]); // You should fetch cart items from an API or localStorage
+  const [cartItems, setCartItems] = useState<CartItem[]>([]); // Use the CartItem type here
   const router = useRouter();
+
+  // Fetch cart items from localStorage or an API when component mounts
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const storedCart = localStorage.getItem('cartItems');
+      if (storedCart) {
+        setCartItems(JSON.parse(storedCart)); // Assuming cartItems are stored as a JSON string
+      }
+    }
+  }, []);
 
   const handlePlaceOrder = () => {
     axios.post('/api/orders', {
@@ -15,11 +33,13 @@ const Checkout = () => {
       totalPrice: cartItems.reduce((total, item) => total + item.price * item.quantity, 0),
     })
     .then(() => {
-     
       toast.success('Order placed successfully');
       router.push('/order-confirmation'); // Redirect to a confirmation page
     })
-    .catch(err => console.log(err));
+    .catch(err => {
+      console.log(err);
+      toast.error('Error placing order');
+    });
   };
 
   return (

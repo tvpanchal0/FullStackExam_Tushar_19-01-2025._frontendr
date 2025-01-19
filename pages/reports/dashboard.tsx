@@ -2,11 +2,23 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { getDailyRevenue, getSalesByCategory } from '../../utils/api';
 
+// Define the structure for dailyRevenue and salesByCategory
+interface DailyRevenueItem {
+  date: string;
+  revenue: number;
+}
+
+interface SalesByCategoryItem {
+  _id: string;
+  totalSales: number;
+}
+
 const Dashboard: React.FC = () => {
-  const [dailyRevenue, setDailyRevenue] = useState<any[]>([]);
-  const [salesByCategory, setSalesByCategory] = useState<any[]>([]);
+  // Specify types for the state variables
+  const [dailyRevenue, setDailyRevenue] = useState<DailyRevenueItem[]>([]);
+  const [salesByCategory, setSalesByCategory] = useState<SalesByCategoryItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const [token, setToken] = useState<string | null>(null);
+
   const router = useRouter();
 
   useEffect(() => {
